@@ -28,9 +28,9 @@ new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
 // Choose which level to build
 
-// buildLevelOld(scene, LevelOneLayout); // Utilisation de LevelOneLayout avec buildLevelOld
+ buildLevelOld(scene, LevelOneLayout); // Utilisation de LevelOneLayout avec buildLevelOld
 // buildLevelOld(scene, LevelTwoLayout); // Utilisation de LevelTwoLayout avec buildLevelOld
 
-buildLevelKit(scene, LevelThreeLayout); // Utilisation de LevelThreeLayout avec buildLevelKit
+//  buildLevelKit(scene, LevelThreeLayout); // Utilisation de LevelThreeLayout avec buildLevelKit
 
 engine.runRenderLoop(() => scene.render());
