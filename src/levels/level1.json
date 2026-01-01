@@ -1,0 +1,19 @@
+{
+  "id": "level1",
+  "unit": 0.02,
+  "pieces": [
+    { "id": "WideFilled16", "g": [0, 0, 0], "rotY": 0 },
+    { "id": "WideSlope16",  "g": [8, -1, 0], "rotY": 0 },
+    { "id": "WideFilled16", "g": [16, -2, 0], "rotY": 0 },
+
+    { "id": "Turn90Filled10", "g": [22.5, -2, 0], "rotY": 0 },
+
+    { "id": "WideFilled16", "g": [22.5, -3, 6.5], "rotY": 1.57079632679 },
+    { "id": "WideSlope16",  "g": [22.5, -4, 14.5], "rotY": 1.57079632679 },
+    { "id": "WideFilled16", "g": [22.5, -5, 22.5], "rotY": 1.57079632679 },
+
+    { "id": "WideSpiral8_90_24", "g": [22.5, -6, 32.5], "rotY": 0 },
+
+    { "id": "Chequered8", "g": [22.5, -7, 44.5], "rotY": 0 }
+  ]
+}

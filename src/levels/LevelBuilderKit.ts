@@ -1,50 +1,45 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders";
 
-export type PieceConfig = {
-  file: string; // mesh name inside MarbleKit.glb
-  pos: [number, number, number];
-  rot?: [number, number, number];
-  scale?: [number, number, number];
-};
+type MovableNode = BABYLON.TransformNode | BABYLON.AbstractMesh;
 
-const kitCache: Record<string, BABYLON.Mesh> = {};
+function isMovable(n: BABYLON.Node): n is MovableNode {
+  return n instanceof BABYLON.TransformNode || n instanceof BABYLON.AbstractMesh;
+}
 
-async function loadKit(scene: BABYLON.Scene) {
-  if (Object.keys(kitCache).length > 0) return kitCache;
-
-  const res = await BABYLON.SceneLoader.ImportMeshAsync(
-    "",
-    "/assets/levels/",
+export async function importLaunchGroup(scene: BABYLON.Scene) {
+  const container = await BABYLON.SceneLoader.LoadAssetContainerAsync(
+    "public/assets/levels/",
     "MarbleKit.glb",
     scene
   );
 
-  for (const m of res.meshes) {
-    if (m instanceof BABYLON.Mesh && m.geometry) {
-      m.setEnabled(false);
-      kitCache[m.name] = m;
-    }
+  container.addAllToScene();
+
+  const group = new BABYLON.TransformNode("LAUNCH_GROUP", scene);
+
+  // IMPORTANT: name must match what is exported from Blender
+  const desiredName = "Launch (root)";
+
+  const candidates: BABYLON.Node[] = [
+    ...container.rootNodes,
+    ...container.transformNodes,
+    ...container.meshes,
+  ];
+
+  const found = candidates.find((n) => n.name === desiredName);
+
+  if (found && isMovable(found)) {
+    found.parent = group;
+    console.log("Found and grouped:", found.name);
+  } else {
+    console.warn(`"${desiredName}" not found. Grouping rootNodes instead.`);
+    for (const rn of container.rootNodes) rn.parent = group;
+
+    console.log("Root nodes:", container.rootNodes.map((n) => n.name));
+    console.log("Transform nodes:", container.transformNodes.map((n) => n.name));
   }
 
-  console.log("Kit loaded:", Object.keys(kitCache));
-  return kitCache;
-}
-
-export async function buildLevelKit(scene: BABYLON.Scene, layout: PieceConfig[]) {
-  const kit = await loadKit(scene);
-
-  for (const piece of layout) {
-    const source = kit[piece.file];
-    if (!source) {
-      console.warn("Mesh not found in kit:", piece.file);
-      continue;
-    }
-
-    const inst = source.createInstance(piece.file + "_inst");
-
-    inst.position = new BABYLON.Vector3(...piece.pos);
-    if (piece.rot) inst.rotation = new BABYLON.Vector3(...piece.rot);
-    if (piece.scale) inst.scaling = new BABYLON.Vector3(...piece.scale);
-  }
+  // Set scale here OR in main (not both). We'll do it in main.
+  return { group, container };
 }
